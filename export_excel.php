@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
         $start_date = required_param('start_date', PARAM_RAW);
         $end_date = required_param('end_date', PARAM_RAW);
       
-        // Create a new spreadsheet
+        // Tạo 1 spreadsheet mới
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
