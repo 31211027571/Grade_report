@@ -17,20 +17,20 @@ require_capability('report/gradereport:view', $context);
 
 echo $OUTPUT->header();
 
-// Get data from form submission
+// Lấy data từ yêu cầu
 $report_name = required_param('report_name', PARAM_TEXT);
 $start_date = required_param('start_date', PARAM_RAW);
 $end_date = required_param('end_date', PARAM_RAW);
 $users = json_decode(required_param('users', PARAM_RAW), true);
 $all_grades = json_decode(required_param('all_grades', PARAM_RAW), true);
 
-// Render the report table
+// Tạo bảng báo cáo
 render_report_table($users, $all_grades, $report_name, $start_date, $end_date);
 
 echo $OUTPUT->footer();
 
 /**
- * Renders the report table with quiz and SCORM grades.
+ * Tạo bảng báo cáo với điểm của quiz và scorm
  */
 function render_report_table($users, $all_grades, $report_name, $start_date, $end_date) {
     $formatted_start_date = date('Y-m-d', strtotime($start_date));
@@ -50,7 +50,7 @@ function render_report_table($users, $all_grades, $report_name, $start_date, $en
     echo '<table border="1">';
     echo '<tr><th>Username</th>';
 
-    // Render headers for each quiz and SCORM activity
+    // Tạo tên của quiz và scorm
     if (!empty($all_grades['quiz'])) {
         foreach (array_keys($all_grades['quiz'][array_key_first($all_grades['quiz'])]) as $activity_id) {
             echo "<th>Quiz $activity_id</th>";
@@ -63,18 +63,18 @@ function render_report_table($users, $all_grades, $report_name, $start_date, $en
     }
     echo '</tr>';
 
-    // Render each user's data in rows
+    // Tạo dữ liệu người dùng
     foreach ($users as $username) {
         echo '<tr><td>' . htmlspecialchars($username) . '</td>';
 
-        // Display grades for quizzes
+        // Điểm quiz tương ứng 
         if (!empty($all_grades['quiz']) && isset($all_grades['quiz'][$username])) {
             foreach ($all_grades['quiz'][$username] as $activity_id => $quiz_grade) {
                 echo "<td>" . htmlspecialchars($quiz_grade) . "</td>";
             }
         }
 
-        // Display grades for SCORM activities
+        // Điểm scorm tương ứng
         if (!empty($all_grades['scorm']) && isset($all_grades['scorm'][$username])) {
             foreach ($all_grades['scorm'][$username] as $scorm_id => $scorm_grade) {
                 echo "<td>" . htmlspecialchars($scorm_grade) . "</td>";

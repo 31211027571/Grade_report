@@ -122,7 +122,7 @@ function get_grades_for_all_activities($courseid, $activity_ids, $usernames, $st
 }
 
 /**
- * Saves the report template data to the database.
+ * Lưu template báo cáo vào database
  */
 function save_report_template($report_name, $usernames, $activity_ids, $start_date, $end_date) {
     global $DB, $USER;
@@ -157,7 +157,7 @@ function save_report_template($report_name, $usernames, $activity_ids, $start_da
     $DB->execute($sql, $template_data);
 }
 /**
- * Loads the report template data for editing.
+ * Load template đã chọn từ database lên form 
  */
 function load_report_template($template_id) {
     global $DB, $USER;
@@ -170,7 +170,7 @@ function load_report_template($template_id) {
 }
 
 /**
- * Renders the report generation form.
+ * Tạo form nhập liệu
  */
 function render_form($template_data = null) {
     global $OUTPUT, $DB, $USER, $courseid;
@@ -207,7 +207,7 @@ function render_form($template_data = null) {
     echo '<label for="save_template">Lưu Template</label>';
     echo '</div>';
 
-    // Populate templates from DB
+    // Lấy template từ database
     $templates = $DB->get_records('gradereport_templates', ['userid' => $USER->id], 'name ASC', 'id, name');
 
     echo '<div class="form-group">';

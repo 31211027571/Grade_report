@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
         $users = $exportData['users'];
         $allGrades = $exportData['all_grades'];
 
-        // Get report name and dates from the form
+        // Lấy dữ liệu từ form
         $report_name = required_param('report_name', PARAM_TEXT);
         $start_date = required_param('start_date', PARAM_RAW);
         $end_date = required_param('end_date', PARAM_RAW);
@@ -22,16 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Set the report title
+        // Cài đặt tiêu đề của báo cáo
         $sheet->setCellValue('A1', 'Report Name: ' . $report_name);
         $sheet->setCellValue('A2', 'From: ' . $start_date . ' To: ' . $end_date);
         
-        // Set header row for usernames and activities
-        $row = 4; // Start from row 4 to leave space for report name and date range
+        // Tạo header cột cho usernames and activities
+        $row = 4; // Bắt đầu từ hàng thứ 4 của sheet để ngăn cách bảng báo cáo và tiêu đề
         $column = 'A';
         $sheet->setCellValue($column . $row, 'Username');
         
-        // Collect all activity IDs
+        // Tạo tất cả các activities
         $allActivityIds = [];
         if (!empty($allGrades['quiz'])) {
             $allActivityIds['quiz'] = array_keys($allGrades['quiz'][array_key_first($allGrades['quiz'])]);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
             $allActivityIds['scorm'] = array_keys($allGrades['scorm'][array_key_first($allGrades['scorm'])]);
         }
 
-        // Render headers for all activities
+        // Tạo header cho tất cả activities
         foreach ($allActivityIds as $type => $ids) {
             foreach ($ids as $activityId) {
                 $column++;
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
             }
         }
 
-        // Set user data in rows
+        // Tạo cột username
         $row++;
         foreach ($users as $username) {
             $column = 'A';
@@ -69,20 +69,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['export_data'])) {
             $row++;
         }
 
-        // Set the filename for the Excel file
+        // Cài đặt file name 
         $fileName = 'grade_report_' . date('YmdHis') . '.xlsx';
 
-        // Clear the output buffer to avoid any output before headers
+        // Làm sạch đầu ra tất cả các header của báo cáo trước
         if (ob_get_length()) {
             ob_clean();
         }
 
-        // Send headers for downloading the file
+        // Gửi lời mời dowload file
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
 
-        // Write and output the Excel file
+        // Viết và xuất file excel.
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         exit();
